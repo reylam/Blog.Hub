@@ -6,7 +6,6 @@ use App\Http\Controllers\BookmarkController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ProfileController;
-use App\Models\Bookmark;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/welcome', function () {
@@ -16,11 +15,17 @@ Route::get('/welcome', function () {
 Route::get('/', [BlogController::class, 'dashboard'])->name('dashboard');
 
 Route::get('/401-unauthorized', function () {
-    return view('401');
+    return view('errors.401');
+});
+
+Route::get('/403-forbidden', function () {
+    return view('errors.403');
 });
 
 Route::get('/category/{slug}', [CategoryController::class, 'show'])->name('dashboard.categories');
+Route::get('/search', [BlogController::class, 'search'])->name('search');
 Route::get('blog/', [BlogController::class, 'index'])->name('blog.index');
+Route::get('blogs', [BlogController::class, 'all'])->name('blog.all');
 Route::get('blog/{slug}', [BlogController::class, 'show'])->name('blog.show');
 Route::middleware('admin', 'auth')->get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
 
@@ -40,5 +45,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/comment', [CommentController::class, 'store'])->name('comment.store');
     Route::delete('/comment/{id}', [CommentController::class, 'destroy'])->name('comment.destroy');
 });
+
 
 require __DIR__ . '/auth.php';

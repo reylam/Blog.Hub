@@ -68,22 +68,25 @@
                                                 @endif
                                                 <p class="font-semibold">{{ $comment->user->username }}</p>
                                             </div>
-                                            @if (Auth::user()->roles[0]->name === 'admin' )  
+                                            @auth
+                                                @if (Auth::user()->roles[0]->name === 'admin' || $comment->user_id === Auth::user()->id)  
                                                 <form action="{{ route('comment.destroy', $comment->id) }}" method="POST">
                                                     @csrf
-                                                    @method('delete')
-                                                    <button
-                                                    class="rounded-full hover:text-red-500 transition duration-300 shadow-md flex items-center justify-center">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-                                                    fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
-                                                    <path
-                                                    d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
-                                                    <path
-                                                    d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
-                                                    </svg>
+                                                        @method('delete')
+                                                        <button
+                                                        class="rounded-full hover:text-red-500 transition duration-300 shadow-md flex items-center justify-center">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                                        fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                                                        <path
+                                                        d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
+                                                        <path
+                                                        d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
+                                                        </svg>
                                                     </button>
                                                 </form>
-                                            @endif
+                                                @endif
+                                            @endauth
+                                            
                                         </div>
                                         <p>{{ $comment->content }}</p>
                                     </div>
@@ -92,12 +95,14 @@
                             @auth
                                 <form action="{{ route('comment.store') }}" method="POST" class="mt-4">
                                     @csrf
-                                    <textarea name="content" class="w-full border-2 hover:border-[#FFD600] rounded-md p-2 bg-transparent" rows="4"
-                                              placeholder="Leave a comment..."></textarea>
-                                    <input type="hidden" name="user_id" value="{{ Auth::user()->id }}">
-                                    <input type="hidden" name="blog_id" value="{{ $blog->id }}"> <!-- Pastikan ini mengacu pada blog yang sedang ditampilkan -->
-                                    <button type="submit"
-                                            class="mt-2 bg-blue-600 text-white py-2 px-4 rounded-md">Submit</button>
+                                    <div class="flex w-full gap-3">
+                                        <input type="text" name="user_id" class="hidden" value="{{Auth::user()->id}}">
+                                        <input name="content" class="w-full border-2 hover:border-[#FFD600] rounded-md p-2 bg-transparent" rows="4"
+                                        placeholder="Leave a comment...">
+                                        <input type="hidden" name="blog_id" value="{{ $blog->id }}"> <!-- Pastikan ini mengacu pada blog yang sedang ditampilkan -->
+                                        <button type="submit"
+                                        class=" bg-blue-600 text-white py-2 px-4 rounded-md">Submit</button>
+                                    </div>
                                 </form>
                             @endauth
                         </div>

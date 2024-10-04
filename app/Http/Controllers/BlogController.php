@@ -6,6 +6,7 @@ use App\Models\Blog;
 use App\Models\Category;
 use App\Models\Comment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Redis;
 
@@ -17,6 +18,14 @@ class BlogController extends Controller
         $categories = Category::all();
 
         return view('blog.indexBlog', compact('blogs', 'categories'));
+    }
+
+    public function all()
+    {
+        $blogs = Blog::orderBy('created_at')->get();
+        $categories = Category::all();
+
+        return view('blog.allBlog', compact('blogs', 'categories'));
     }
 
     public function dashboard()
@@ -79,17 +88,25 @@ class BlogController extends Controller
 
     public function destroy($id)
     {
-        Blog::where('id', $id)->delete();
+        $blog = Blog::where('id', $id)->first();
+        if ($blog->user_id == Auth::user()->id || Auth::user()->roles[0]->name === 'admin') {
+            $blog->delete();
 
-        return redirect()->back()->with('status', 'Blog Deleted Successfully');
+            return redirect()->back()->with('status', 'Blog Deleted Successfully');
+        } else {
+            return redirect('/401-unauthorized');
+        }
     }
 
     public function edit($slug)
     {
         $blog = Blog::where('slug', $slug)->first();
-        $categories = Category::all();
-
-        return view('blog.editBlog', compact('blog', 'categories'));
+        if ($blog->user_id == Auth::user()->id) {
+            $categories = Category::all();
+            return view('blog.editBlog', compact('blog', 'categories'));
+        } else {
+            return redirect('/401-unauthorized');
+        }
     }
 
 
@@ -97,27 +114,44 @@ class BlogController extends Controller
     {
         $blog = Blog::where('slug', $slug)->first();
 
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'content' => 'required|string',
-            'category_id' => 'required|exists:categories,id',
-            'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
+        if ($blog->user_id == Auth::user()->id) {
+
+            $request->validate([
+                'title' => 'required|string|max:255',
+                'content' => 'required|string',
+                'category_id' => 'required|exists:categories,id',
+                'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            ]);
 
 
-        $blog->title = $request->title;
-        $blog->content = $request->content;
-        $blog->category_id = $request->category_id;
+            $blog->title = $request->title;
+            $blog->content = $request->content;
+            $blog->category_id = $request->category_id;
 
 
 
-        $filename = $request->file('thumbnail')->store('thumbnails', 'public');
+            $filename = $request->file('thumbnail')->store('thumbnails', 'public');
 
 
-        $blog->thumbnail = $filename;
+            $blog->thumbnail = $filename;
 
-        $blog->save();
+            $blog->save();
 
-        return redirect()->route('profile.blog')->with('status', 'Blog Updated Successfully');
+            return redirect()->route('profile.blog')->with('status', 'Blog Updated Successfully');
+        } else {
+            return redirect('/401-unauthorized');
+        }
+    }
+
+    public function search(Request $request)
+    {
+        $name = $request->input('name');
+
+
+        $blogs = Blog::where('title', 'like', '%' . $name . '%')->get();
+
+
+
+        return view('blog.search', compact('blogs', 'name'));
     }
 }

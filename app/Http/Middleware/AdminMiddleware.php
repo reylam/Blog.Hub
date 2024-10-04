@@ -18,8 +18,7 @@ class AdminMiddleware
     {
         if (Auth::user()->roles[0]->name === 'admin') {
             return $next($request);
-        }else{
-            return redirect('/401-unauthorized');
         }
+        return redirect('/403-forbidden');
     }
 }

@@ -50,6 +50,8 @@ document.addEventListener("DOMContentLoaded", function () {
             container.scrollBy({ left: 200, behavior: "smooth" });
         }
     });
+    
 });
+
 
 

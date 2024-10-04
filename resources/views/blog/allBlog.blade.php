@@ -15,9 +15,10 @@
         <main class="min-w-full flex flex-col gap-10 items-center justify-center mb-11">
             <div class="flex w-[1200px] flex-wrap gap-9">
                 @foreach ($blogs as $blog)
-                    <div class="w-[350px] object-cover flex flex-col gap-5">
-                        <img src="{{ asset('storage/' . $blog->thumbnail) }}"
-                            class="w-full h-[350px] rounded-2xl object-cover">
+                    <div class="card lazy-load w-[350px] object-cover flex flex-col gap-5 opacity-0 transform translate-y-5 transition-all duration-500 ease-in-out"
+                        data-id="{{ $blog->id }}">
+                        <img data-src="{{ asset('storage/' . $blog->thumbnail) }}"
+                            class="w-full h-[350px] rounded-2xl object-cover" alt="{{ $blog->title }}">
                         <div class="flex flex-col gap-4 px-4 flex-grow">
                             <p class="font-extrabold text-2xl"> {{ Str::limit($blog->title, 20, '...') }}</p>
                             <p class="font-medium text-gray-500 flex-grow">
@@ -77,12 +78,33 @@
                     </div>
                 @endforeach
             </div>
-            <!-- Tambahkan tombol Show All di sini -->
-            <div class="my-6 text-center">
-                <a href="{{ route('blog.all') }}"
-                    class="px-6 py-2 bg-[#FFD600] text-black rounded-full hover:bg-yellow-600 transition">Show All</a>
-            </div>
         </main>
-        {{ $blogs }}
     </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const lazyLoadCards = document.querySelectorAll("div.lazy-load");
+
+            const cardObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const card = entry.target;
+
+                       
+                        const img = card.querySelector("img");
+                        img.src = img.dataset.src;
+
+                        card.classList.remove("opacity-0", "translate-y-5");
+                        card.classList.add("show");
+
+                        observer.unobserve(card);
+                    }
+                });
+            });
+
+            lazyLoadCards.forEach(card => {
+                cardObserver.observe(card);
+            });
+        });
+    </script>
 </x-app-layout>

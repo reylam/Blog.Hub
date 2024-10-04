@@ -29,10 +29,10 @@
     <div class="min-h-screen bg-[#111827] font-['Poppins']">
         <div class="flex items-center justify-center min-h-screen px-2">
             <div class="text-center">
-                <h1 class="text-3xl font-bold">401 Unauthorized !</h1>
-                <p class="text-2xl font-medium mt-4">Oops! Access Denied</p>
-                <p class="mt-4 mb-8">You are not authorized to view this page. Please check your credentials and try
-                    again.
+                <h1 class="text-3xl font-bold">404 Not Found!</h1>
+                <p class="text-2xl font-medium mt-4">Oops! Page Not Found</p>
+                <p class="mt-4 mb-8 w-2/3 m-auto">The page you are looking for cannot be found. It might have been removed, had its
+                    name changed, or is temporarily unavailable. Please check the URL and try again.
                 </p>
                 <a href="{{ route('dashboard') }}"
                     class="px-6 py-3 bg-white font-semibold rounded-full hover:bg-purple-100 transition duration-300 ease-in-out dark:bg-gray-700 dark:text-white hover:bg-[#FFD600] hover:text-black">
