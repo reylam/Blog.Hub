@@ -27,7 +27,12 @@ Route::get('/search', [BlogController::class, 'search'])->name('search');
 Route::get('blog/', [BlogController::class, 'index'])->name('blog.index');
 Route::get('blogs', [BlogController::class, 'all'])->name('blog.all');
 Route::get('blog/{slug}', [BlogController::class, 'show'])->name('blog.show');
-Route::middleware('admin', 'auth')->get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
+Route::middleware('admin', 'auth')->group(function () {
+    Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
+    Route::put('/admin/dashboard/{id}/updateAccount', [AdminController::class, 'updateAccount'])->name('admin.updateAccount');
+    Route::post('/admin/dashboard/storeAccount', [AdminController::class, 'storeAccount'])->name('admin.storeAccount');
+    Route::delete('/admin/dashboard/{username}/deleteAccount', [AdminController::class, 'destroyAccount'])->name('admin.deleteAccount');
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

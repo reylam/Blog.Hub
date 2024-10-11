@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", function () {
         dots[currentIndex].classList.remove(
             "bg-transparent",
             "border-gray-300"
-        ); // Remove default styles
+        ); 
         dots[currentIndex].classList.add("bg-white");
     }
 
